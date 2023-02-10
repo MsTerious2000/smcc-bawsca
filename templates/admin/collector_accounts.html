@@ -1,0 +1,180 @@
+{% set active_page = "collector_accounts" %}
+{% extends "admin/header.html" %}
+{% block admin %}
+<div class="row">
+	<div class="col-12">
+		<button class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Collector
+			Account</button>
+
+		<div class="card my-4">
+
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Collector Accounts</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>
+							<tr>
+								<th class="text-secondary opacity-7"></th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Username</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fullname</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Account</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<!-- EDIT PART SA COLLECTOR -->
+
+							{% for i in data %}
+							<tr>
+								<td>
+									<button class="btn btn-sm bg-gradient-info" data-bs-toggle="modal"
+										data-bs-target="#edit{{i[0]}}"><i class="fa fa-pencil"></i>
+										EDIT
+									</button>
+								</td>
+								<td>&nbsp;&nbsp;&nbsp;&nbsp;{{i[3]}}</td>
+								<td>{{i[2]}}, {{i[1]}}</td>
+								<td>COLLECTOR</td>
+								<td>
+									{% if(i[6] == 'Active') %}
+										<span class="badge badge-sm bg-gradient-success">{{i[6]}}</span>
+									{% else %}
+										<span class="badge badge-sm bg-gradient-secondary">{{i[6]}}</span>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+
+							<!-- TAMAN DRI -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- INPUT PARA ADD UG NEW COLLECTOR -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">ADD COLLECTOR</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="/add_collector" method="POST">
+					<div class="form-floating mb-3">
+						<input type="text" name="fname" class="form-control" placeholder="First Name" required>
+						<label for="floatingInput">First Name</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="lname" class="form-control" placeholder="Last Name" required>
+						<label for="floatingInput">Last Name</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="email" name="email" class="form-control" placeholder="Email Address" required>
+						<label for="floatingInput">Email Address</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="contact" class="form-control" maxlength="11" placeholder="Contact Number" required>
+						<label for="floatingInput">Contact Number</label>
+					</div>
+
+					<!-- TAMAN DRI -->
+
+					<!-- SUBMIT PARA MAG ADD UG NEW COLLECTOR -->
+
+					<hr>
+					<button type="submit" class="btn bg-gradient-info">ADD COLLECTOR</button>
+
+					<!-- TAMAN DRI -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% for i in data %}
+<div class="modal fade" id="edit{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">UPDATE COLLECTOR</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="/edit_collector" method="POST">
+					<input type="text" name="id" value="{{i[0]}}" style="display: none;">
+					<div class="form-floating mb-3">
+						<input type="text" name="fname" class="form-control" placeholder="First Name" value="{{i[1]}}"
+							required>
+						<label for="floatingInput">First Name</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="lname" class="form-control" placeholder="Last Name" value="{{i[2]}}"
+							required>
+						<label for="floatingInput">Last Name</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="email" name="email" class="form-control" placeholder="Email Address" value="{{i[9]}}" required>
+						<label for="floatingInput">Email Address</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="contact" class="form-control" maxlength="11" placeholder="Contact Number" value="{{i[8]}}" required>
+						<label for="floatingInput">Contact Number</label>
+					</div>
+					
+					<div class="col form-floating mb-3">
+						<select class="form-control" required name="status">
+							<option selected hidden disabled value="">Status</option>
+							{% if i[6] == 'Active' %}
+								<option selected>Active</option>
+							{% else %}
+								<option>Active</option>
+							{% endif %}
+	
+							{% if i[6] == 'Inactive' %}
+								<option selected>Inactive</option>
+							{% else %}
+								<option>Inactive</option>
+							{% endif %}
+						</select>
+						<label for="floatingInput">Status</label>
+					</div>
+
+					<hr>
+					<button type="submit" class="btn bg-gradient-info">UPDATE COLLECTOR</button>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+
+<style type="text/css">
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+{% endblock %}

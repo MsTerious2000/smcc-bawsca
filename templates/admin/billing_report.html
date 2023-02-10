@@ -1,0 +1,257 @@
+{% set active_page = "billing_report" %}
+{% extends "admin/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!--{{billing}}
+  -->
+	<form action="/search_billing_report" class="form-inline" method="POST">
+		<div class="col-2" style="display: none;">
+			<div class="form-floating mb-3">
+				<select class="form-control" name="week">
+					<option selected hidden value="">Please select</option>
+					<option value="1">Week 1</option>
+					<option value="2">Week 2</option>
+					<option value="3">Week 3</option>
+					<option value="4">Week 4</option>
+				</select>
+				<label for="floatingInput">Week</label>
+			</div>
+		</div>
+		<div class="col-2">
+				<!-- <div class="input-group input-group-outline">
+					<label class="form-label">Search by name...</label>
+					<input type="text" name="user_id" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)">
+				</div> -->
+			<div class="form-floating mb-3">
+				<select class="form-control" name="month">
+					<option selected hidden value="">Please select</option>
+					<option value="01">January</option>
+					<option value="02">February</option>
+					<option value="03">March</option>
+					<option value="04">April</option>
+					<option value="05">May</option>
+					<option value="06">June</option>
+					<option value="07">July</option>
+					<option value="08">August</option>
+					<option value="09">September</option>
+					<option value="10">October</option>
+					<option value="11">November</option>
+					<option value="12">December</option>
+				</select>
+				<label for="floatingInput">Month</label>
+			</div>
+		</div>
+		<div class="col-2">
+			<div class="form-floating mb-3">
+				<select class="form-control" required name="year">
+					<option selected hidden disabled value="">Please select</option>
+					{% for i in year_list %}
+						<option value="{{i}}">{{i}}</option>
+					{% endfor %}
+				</select>
+				<label for="floatingInput">Year</label>
+			</div>
+		</div>
+		<div class="col-2">
+			<button class="btn btn-sm btn-info"><i class="fa fa-filter"></i> Filter</button>
+			<button class="btn btn-sm btn-info" onclick="print()"><i class="fa fa-print"></i> Print</button>
+		</div>
+	</form>
+	<br><br>
+  
+	<div class="col-12 text-center">
+		<div class="card my-4" id="section-to-print">
+			<table width="100%" border=0>
+				<thead>
+					<tr>
+						<td width="150px" align="right"><img src="../../static/assets/img/logo.png" width="80px" height="80px" /></td>
+						<td width="500px" align="center" >
+							<font face="Calibri" size="6" ><small>Buenavista Alubihid Water Supply Corporation Association</small> </font><br />
+							<font face="Arial" size="3" >Buenavista, Agusan del Norte</font><br>
+						<td width="150px"> </td>
+					</tr>
+				</thead>
+			</table>
+			<br>
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Billing Report [ {{ filter_type }} ]</h6>
+					<small class="text-white">As of <script>document.write(new Date())</script></small>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				
+				<div class="table-responsive p-0">
+					<table class="table align-items-center mb-0">
+						<!-- IF YEAR -->
+						<thead>
+							<tr>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Billing Date</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Consumer</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bill Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in billing %}
+							<tr>
+								<td>
+									{% if i[10] == '01' %}
+										January	
+									{% elif i[10] == '02' %}
+										February		
+									{% elif i[10] == '03' %}
+										March
+									{% elif i[10] == '04' %}
+										April	
+									{% elif i[10] == '05' %}
+										May
+									{% elif i[10] == '06' %}
+										June
+									{% elif i[10] == '07' %}
+										July
+									{% elif i[10] == '08' %}
+										August
+									{% elif i[10] == '09' %}
+										September
+									{% elif i[10] == '10' %}
+										October			
+									{% elif i[10] == '11' %}
+										November
+									{% elif i[10] == '12' %}
+										December	
+									{% endif %}
+									- {{i[11]}}</td>
+								<td>{{i[1]}} {{i[2]}}</td>
+								<td><b>&#8369; {{i[13]}}.00</b></td>
+							</tr>
+							{% endfor %}
+							{% for i in recon %}
+							<tr>
+								<td>{{i[9]}}</td>
+								<td>{{i[1]}} {{i[2]}}</td>
+								<td><b>&#8369; {{i[10]}}.00</b></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td><b>TOTAL </b></td>
+								<td></td>
+								<td><b>&#8369; 
+									{% if total is none %}
+										0.00
+									{% else %}
+										{{total}}
+									{% endif %}
+								</b></td>
+							</tr>
+							<tr>
+								<td>
+									<br>
+									Prepared By:
+									<u>Juliet Paquera</u> 
+									<br> 
+									&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; Cashier
+								</td>
+								<td></td>
+								<td>
+									<br>
+									Approved By:
+									<u> Roel T. Arobo</u>
+									<br> 
+									&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; Chairman
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<style type="text/css">
+	@media print {
+		#section-to-print {
+			background-color: white;
+			height: 100%;
+			width: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			margin: 0;
+			font-size: 14px;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+
+	/* Style the form - display items horizontally */
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+/* Add some margins for each label */
+.form-inline label {
+  margin: 5px 10px 5px 0;
+}
+
+/* Style the input fields */
+.form-inline input {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+/* Style the submit button */
+.form-inline button {
+  padding: 10px 20px;
+  background-color: dodgerblue;
+  border: 1px solid #ddd;
+  color: white;
+}
+
+.form-inline button:hover {
+  background-color: royalblue;
+}
+
+/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		function month(num) {
+			var month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+			return month[(Number(num) - 1)];
+		}
+		// var num = $("#month").html()
+		// $("#month").html(month(num));
+	});
+</script>
+{% endblock %}

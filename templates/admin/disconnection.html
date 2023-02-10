@@ -1,0 +1,189 @@
+{% set active_page = "disconnection" %}
+{% extends "admin/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!--{{billing}}
+  -->
+	<div class="col-7"></div>
+	<div class="col-5">
+		<form action="/search_disconnection" method="POST">
+			<div class="input-group input-group-outline">
+				<label class="form-label">Search by name...</label>
+				<input type="text" name="user_id" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)">
+			</div>
+		</form>
+	</div>
+	<br><br>
+  
+	<div class="col-12 text-center">
+
+		<!--  {% for i in billing %}
+      {{i}}<hr>
+    {% endfor %} -->
+	
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">For Disconnection</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>
+							<tr>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Consumer</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Due Months (MM/YYYY)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Number of Due Bills</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Disconnection date</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bill (Amount)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in billing %}
+							{% if i[2] >= 3 %}
+							<tr>
+								<td>{{i[0]}}</td>
+								<td>{{i[1]}}</td>
+								<td>{{i[2]}}</td>
+								<td></td>
+								<td><b>&#8369; {{i[3]}}.00</b></td>
+								<td><b style="color:red">{{i[4]}}</b></td>
+								<td>
+									<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#for_disconnection{{i[5]}}">
+										<span class="material-symbols-outlined">cut</span>
+										Disconnect
+									</button>
+								</td>
+							</tr>
+							{% endif %}
+
+							<div class="modal fade" id="for_disconnection{{i[5]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-lg">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">For Disconnection</h5>
+										</div>
+										<div class="modal-body" style="border: 1px dotted black;">
+											Are you sure?<br>
+											<a href="/for_disconnect_user/{{i[5]}}" class="btn btn-info btn-sm"> YES</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+
+							{% for i in for_disconnection %}
+							{% if i[2] != 0 %}
+							<tr>
+								<td>{{i[0]}}</td>
+								<td>{{i[1]}}</td>
+								<td>{{i[2]}}</td>
+								<td>{{i[10]}}</td>
+								<td><b>&#8369; {{i[6]}}.00</b></td>
+								<td><b style="color:red">{{i[7]}}</b></td>
+								<td>
+									<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#disconnect{{i[8]}}">
+										<span class="material-symbols-outlined">cut</span>
+										Disconnect
+									</button>
+								</td>
+							</tr>
+
+							<div class="modal fade" id="disconnect{{i[8]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-lg">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Disconnection</h5>
+										</div>
+										<div class="modal-body" style="border: 1px dotted black;">
+											Are you sure?<br>
+											<a href="/disconnect_user/{{i[8]}}" class="btn btn-info btn-sm"> YES</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div class="modal fade" id="search" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">SEARCH</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body text-center">
+
+				<form action="/search" method="POST">
+					<input type="text" name="user_id" list="users_list" class="form-control" required>
+					<datalist id="users_list">
+						{% for i in users %}
+						<option value="{{i[0]}}">{{i[1]}} {{i[2]}}</option>
+						{% endfor %}
+					</datalist>
+					<br>
+					<button class="btn btn-info" type="submit">Search</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	@media print {
+		body * {
+			visibility: hidden;
+		}
+
+		#section-to-print,
+		#section-to-print * {
+			visibility: visible;
+		}
+
+		#section-to-print {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		function month(num) {
+			var month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+			return month[(Number(num) - 1)];
+		}
+		// var num = $("#month").html()
+		// $("#month").html(month(num));
+	});
+</script>
+{% endblock %}

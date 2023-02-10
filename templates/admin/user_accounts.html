@@ -1,0 +1,251 @@
+{% set active_page = "user_accounts" %}
+{% extends "admin/header.html" %}
+{% block admin %}
+<div class="row">
+	<div class="col-12">
+		<button class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Consumer
+			Account</button>
+
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Consumer Accounts</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>
+							<tr>
+								<th class="text-secondary opacity-7"></th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Username</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fullname</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Gender</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Contact</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Birthday</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in data %}
+							<tr>
+								<td>
+									<button class="btn btn-sm bg-gradient-info" data-bs-toggle="modal"
+										data-bs-target="#edit{{i[0]}}"><i class="fa fa-pencil"></i>
+										EDIT
+									</button>
+								</td>
+								<td>&nbsp;&nbsp;&nbsp;&nbsp;{{i[3]}}</td>
+								<td>{{i[2]}}, {{i[1]}}</td>
+								<td>{{i[9]}}</td>
+								<td>{{i[5]}}</td>
+								<td>{{i[6]}}</td>
+								<td>{{i[7]}}</td>
+								<td>{{i[8]}}</td>
+								<td>
+									{% if(i[10] == 'Active') %}
+										<span class="badge badge-sm bg-gradient-success">{{i[10]}}</span>
+									{% else %}
+										<span class="badge badge-sm bg-gradient-secondary">{{i[10]}}</span>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- INPUT PARA ADD UG NEW CONSUMER -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">ADD CONSUMER</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="/add_user" method="POST">
+
+					<div class="row">
+						<div class="col form-floating mb-3">
+							<input type="text" name="fname" class="form-control" placeholder="First Name" required>
+							<label for="floatingInput">First Name</label>
+						</div>
+						<div class="col form-floating mb-3">
+							<input type="text" name="lname" class="form-control" placeholder="Last Name" required>
+							<label for="floatingInput">Last Name</label>
+						</div>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="contact" class="form-control" maxlength="11" placeholder="Contact Number"  
+								onkeydown="return ( event.ctrlKey || event.altKey 
+								|| (47<event.keyCode && event.keyCode<58 && event.shiftKey==false) 
+								|| (95<event.keyCode && event.keyCode<106)
+								|| (event.keyCode==8) || (event.keyCode==9) 
+								|| (event.keyCode>34 && event.keyCode<40) 
+								|| (event.keyCode==46) )" required>
+						<label for="floatingInput">Contact Number</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="email" name="email" class="form-control" placeholder="Email" required>
+						<label for="floatingInput">Email</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="address" class="form-control" placeholder="Address" required>
+						<label for="floatingInput">Address</label>
+					</div>
+
+					<div class="row">
+						<div class="col form-floating mb-3">
+							<input type="date" name="bday" class="form-control" placeholder="Birth Date" required>
+							<label for="floatingInput">Birthday</label>
+						</div>
+						<div class="col form-floating mb-3">
+							<select class="form-control" required name="gender">
+								<option selected hidden disabled value="">Gender</option>
+								<option>Male</option>
+								<option>Female</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="account_id" class="form-control" placeholder="Account ID" required>
+						<label for="floatingInput">Account ID</label>
+					</div>
+
+					<!-- TAMAN DRI -->
+
+					<!-- SUBMIT BUTTON -->
+					<hr>
+					<button type="submit" class="btn bg-gradient-info">ADD CONSUMER</button>
+					<!---->
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- UPDATE CONSUMER SIDE -->
+
+{% for i in data %}
+<div class="modal fade" id="edit{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">UPDATE CONSUMER</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="/edit_user" method="POST">
+					<input type="text" name="id" value="{{i[0]}}" style="display: none;">
+					
+					<div class="row">
+						<div class="col form-floating mb-3">
+							<input type="text" name="fname" class="form-control" placeholder="First Name" value="{{i[1]}}"
+								required>
+							<label for="floatingInput">First Name</label>
+						</div>
+						<div class="col form-floating mb-3">
+							<input type="text" name="lname" class="form-control" placeholder="Last Name" value="{{i[2]}}"
+								required>
+							<label for="floatingInput">Last Name</label>
+						</div>
+					</div>
+					
+					<div class="form-floating mb-3">
+						<input type="number" name="contact" class="form-control" placeholder="Contact Number"
+							value="{{i[5]}}" required>
+						<label for="floatingInput">Contact Number</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="email" name="email" class="form-control" placeholder="Email" value="{{i[6]}}"
+							required>
+						<label for="floatingInput">Email</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="text" name="address" class="form-control" placeholder="Address" value="{{i[7]}}"
+							required>
+						<label for="floatingInput">Address</label>
+					</div>
+
+					<div class="form-floating mb-3">
+						<input type="date" name="bday" class="form-control" value="{{i[8]}}" required>
+						<label for="floatingInput">Birthday</label>
+					</div>		
+					
+					<div class="row">
+						<div class="col form-floating mb-3">
+							<select class="form-control" required name="gender">
+								<option selected hidden disabled value="">Gender</option>
+								{% if i[9] == 'Male' %}
+									<option selected>Male</option>
+								{% else %}
+									<option>Male</option>
+								{% endif %}
+		
+								{% if i[9] == 'Female' %}
+									<option selected>Female</option>
+								{% else %}
+									<option>Female</option>
+								{% endif %}
+							</select>
+							<label for="floatingInput">Gender</label>
+						</div>
+						<div class="col form-floating mb-3">
+							<select class="form-control" required name="status">
+								<option selected hidden disabled value="">Status</option>
+								{% if i[10] == 'Active' %}
+									<option selected>Active</option>
+								{% else %}
+									<option>Active</option>
+								{% endif %}
+		
+								{% if i[10] == 'Inactive' %}
+									<option selected>Inactive</option>
+								{% else %}
+									<option>Inactive</option>
+								{% endif %}
+							</select>
+							<label for="floatingInput">Status</label>
+						</div>
+					</div>
+					<!-- TAMAN DIRI -->
+
+					<!-- SUBMIT BUTTON -->
+					<hr>
+					<button type="submit" class="btn bg-gradient-info">UPDATE CONSUMER</button>
+					<!---->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+
+<style type="text/css">
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+{% endblock %}

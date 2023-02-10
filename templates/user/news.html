@@ -1,0 +1,219 @@
+{% set active_page = "announcement" %}
+{% extends "user/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!-- Earnings (Monthly) Card Example -->
+	{% if for_disconnection %}
+	<div class="col-xl-12 col-md-6 mb-4">
+		<div class="card border-left-primary shadow h-100 py-2">
+			<div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+						<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+							Warning</div>
+						<div class="h5 mb-0 font-weight-bold text-primary text-gray-800">
+							Your account is for disconnection. Please pay your bills on or before {{ for_disconnection[0][13] }}
+						</div>
+					</div>
+					<div class="col-auto">
+						<i class="fas fa-exclamation-triangle text-primary fa-2x text-gray-300"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if expired %}
+	<div class="col-xl-12 col-md-6 mb-4">
+		<div class="card border-left-primary shadow h-100 py-2">
+			<div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+						<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+							Warning</div>
+						<div class="h5 mb-0 font-weight-bold text-primary text-gray-800">You are already disconnected. Please prepare money and proceed to cashiers office for your payment</div>
+					</div>
+					<div class="col-auto">
+						<i class="fas fa-exclamation-triangle text-primary fa-2x text-gray-300"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+</div>
+
+<div class="row">
+
+	<div class="col-12">
+
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">ANNOUNCEMENT</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				{% for i in data %}
+					<div style="padding:10px">
+						Posted by: <b>{{i[4]}} {{i[5]}}</b><br>
+						Posted on: <b>{{i[2]}}</b>
+						<br><br>
+						<h3>{{i[1]}}</h3>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+{% for i in billing %}
+{% if i[8] =='UNPAID' %}
+<div class="modal fade" id="pay{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">GCASH PAYMENT</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+				<p>Payment for Billing ID: #{{i[0]}} on {{i[3]}} - {{i[4]}}</p>
+				<form action="/pay_bill/{{i[0]}}" method="POST" enctype="multipart/form-data">
+
+					<b>STEP 1:</b> Send Payment to GCash +63 955-9717-819<br>
+					<b>STEP 2:</b> Take Screenshot of Reciept<br>
+					<b>STEP 3:</b> Upload Screenshot in the form below<br>
+					<b>STEP 4:</b> Wait for confirmation of your payment validation.
+					<br><br>
+					<b>Upload GCASH Reciept</b><br>
+					<input type="file" name="reciept" class="btn btn-primary" required>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="pick_up{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">PICK-UP PAYMENT</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+
+				<form action="/pickup_bill/{{i[0]}}" method="POST">
+					<center>
+						<p>Payment for Billing ID: #{{i[0]}} on {{i[3]}} - {{i[4]}}</p>
+						<b>
+							<center>PAYMENT WILL HAVE AN ADDITIONAL 50.00 Pesos Pick-up charge.<br>CONFIRM PICK-UP?
+						</b>
+						<br>
+						<br>
+						<br>
+						<button type="submit" class="btn btn-primary">CONFIRM</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+							aria-label="Close">CANCEL</button>
+					</center>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="walk_in{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">WALK-IN</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+				<br>
+				<b>KINDLY GO TO YOUR LOCAL WATER SUPPLYING AGENCY AND PAY VIA CASHIER TRANSACTION<br></b>
+				<br>
+			</div>
+		</div>
+	</div>
+</div>
+{% elif i[8] == 'PAYED' %}
+<div class="modal fade" id="receipt{{i[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">RECIEPT for Billing ID #{{i[0]}}</h5>
+
+				<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:black">X</button> -->
+				<button class="btn btn-info" onclick="print()">
+					<span class="material-symbols-outlined">
+						print
+					</span>
+					PRINT
+				</button>
+			</div>
+			<div class="modal-body" id="section-to-print">
+				<p>Reciept for Billing ID: <b>#{{i[0]}}<b> on {{i[3]}} - {{i[4]}}</p>
+
+				Payment Method: <b>{{i[9]}}</b><br>
+				Consumer: {{data[0][1]}} {{data[0][2]}}<br>
+				Amount Payed: &#8369;{{i[6]}}.00<br>
+				Date Payed: {{i[11]}}<br>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endfor %}
+
+
+
+
+<style type="text/css">
+	@media print {
+		body * {
+			visibility: hidden;
+		}
+
+		#section-to-print,
+		#section-to-print * {
+			visibility: visible;
+		}
+
+		#section-to-print {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+</script>
+{% endblock %}

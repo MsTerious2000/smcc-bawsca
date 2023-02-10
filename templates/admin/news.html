@@ -1,0 +1,97 @@
+{% set active_page = "admin_news" %}
+{% extends "admin/header.html" %}
+{% block admin %}
+<div class="row">
+	<div class="col-12">
+		<button class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Announcement</button>
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">ANNOUNCEMENT</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				{% for i in data %}
+						<div style="padding:20px;">
+						<!-- {{i[0]}} -->
+							Posted by: <b>{{i[4]}} {{i[5]}}</b>
+							<br>
+							Posted on: <b>{{ i[2] }}</b>
+							<br><br>
+							<h3>{{i[1]}}</h3>
+							{% if i[6] == 'ADMIN' %}
+								<button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit{{i[0]}}">Edit Post</button>
+							{% endif %}
+						</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ADD NEWS SIDE -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">CREATE ANNOUNCEMENT</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="/add_news" method="POST">
+					<div class="form-floating mb-3">
+						<textarea name="news" class="form-control" placeholder="News" required cols="30" rows="10"></textarea>
+						<label for="floatingInput">Announcement</label>
+					</div>
+					<!-- TAMAN DRI -->
+
+					<!-- SUBMIT BUTTON -->
+
+					<button type="submit" class="btn bg-gradient-info">POST ANNOUNCEMENT</button>
+					<!-- TAMAN DRI -->
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% for i in data %}
+	<!-- Edit Office Modal -->
+	<div class="modal fade" id="edit{{i[0]}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Announcement</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form action="/edit_news" method="POST">
+					<div class="modal-body">
+						<input type="hidden" name="id" value="{{i[0]}}">
+						<div class="form-floating mb-3">
+							<textarea name="news" value="{{i[1]}}" class="form-control" placeholder="News" required cols="30" rows="10"></textarea>
+							<label for="floatingInput">Announcement</label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn bg-gradient-info">Submit</button>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+<style type="text/css">
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+{% endblock %}

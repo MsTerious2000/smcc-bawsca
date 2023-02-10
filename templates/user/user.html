@@ -1,0 +1,265 @@
+{% set active_page = "user" %}
+{% extends "user/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!-- Earnings (Monthly) Card Example -->
+	{% if for_disconnection %}
+	<div class="col-xl-12 col-md-6 mb-4">
+		<div class="card border-left-primary shadow h-100 py-2">
+			<div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+						<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+							Warning</div>
+						<div class="h5 mb-0 font-weight-bold text-primary text-gray-800">
+							Your account is for disconnection. Please pay your bills on or before {{ for_disconnection[0][13] }}
+						</div>
+					</div>
+					<div class="col-auto">
+						<i class="fas fa-exclamation-triangle text-primary fa-2x text-gray-300"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if expired %}
+	<div class="col-xl-12 col-md-6 mb-4">
+		<div class="card border-left-primary shadow h-100 py-2">
+			<div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+						<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+							Warning</div>
+						<div class="h5 mb-0 font-weight-bold text-primary text-gray-800">You are already disconnected. Please prepare money and proceed to cashiers office for your payment</div>
+					</div>
+					<div class="col-auto">
+						<i class="fas fa-exclamation-triangle text-primary fa-2x text-gray-300"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+</div>
+
+<div class="row">
+
+	<div class="col-12 text-center">
+
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Pending Bills</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>	
+							<tr>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Billing ID</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">Due Date (MM/YYYY)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">Reading</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">Bill (Amount)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">STATUS</th>
+								<th class="text-secondary opacity-7"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in billing %}
+							<tr>
+								<td><b>#{{i[7]}}</b></td>
+								<td>
+									{% if i[10] == '01' %} January	
+									{% elif i[10] == '02' %} February		
+									{% elif i[10] == '03' %} March
+									{% elif i[10] == '04' %} April	
+									{% elif i[10] == '05' %} May
+									{% elif i[10] == '06' %} June
+									{% elif i[10] == '07' %} July
+									{% elif i[10] == '08' %} August
+									{% elif i[10] == '09' %} September
+									{% elif i[10] == '10' %} October			
+									{% elif i[10] == '11' %} November
+									{% elif i[10] == '12' %} December	
+									{% endif %}
+									- {{i[11]}}</td>
+								<td>{{i[12]}}</td>
+								<td><b>&#8369; {{i[13]}}.00</b></td>
+								<td>
+									{% if i[15] == 'UNPAID' %}
+									<b style="color:red">{{i[15]}}</b>
+									{% elif i[15] == 'GCASH' %}
+									<b style="color:blue">PENDING (GCash)</b>
+									{% elif i[15] == 'PICK-UP' %}
+									<b style="color:blue">FOR {{i[15]}}</b>
+									{% else %}
+										<b style="color:red">{{i[15]}}</b>
+									{% endif %}
+								</td>
+								<td>
+									{% if i[15] == 'UNPAID' %}
+									<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#pay{{i[7]}}">
+										<span class="material-symbols-outlined">
+											payments
+										</span>
+										G-CASH
+									</button>
+
+									<button class="btn btn-info" data-bs-toggle="modal"
+										data-bs-target="#walk_in{{i[7]}}">
+										<span class="material-symbols-outlined">
+											directions_walk
+										</span>
+										WALK-IN
+									</button>
+
+									<button class="btn btn-info" data-bs-toggle="modal"
+										data-bs-target="#pick_up{{i[7]}}">
+										<span class="material-symbols-outlined">
+											two_wheeler
+										</span>
+										PICK-UP
+									</button>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+{% for i in billing %}
+{% if i[15] =='UNPAID' %}
+<div class="modal fade" id="pay{{i[7]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">GCASH PAYMENT</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+				<p>Payment for Billing ID: #{{i[7]}} on {{i[10]}}-{{i[11]}}</p>
+				<form action="/pay_bill/{{i[7]}}" method="POST" enctype="multipart/form-data">
+
+					<b>STEP 1:</b> Send Payment to GCash <br>Account Number: +63 955-9717-819 <br>Account Name:
+					Christine Mae Robuca<br>
+					<b>STEP 2:</b> Take Screenshot of Reciept<br>
+					<b>STEP 3:</b> Upload Screenshot in the form below<br>
+					<b>STEP 4:</b> Wait for confirmation of your payment validation.
+					<br><br>
+					<b>Upload GCASH Reciept</b><br>
+					<input type="file" name="reciept" class="btn btn-info" required>
+					<button type="submit" class="btn btn-danger ">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="pick_up{{i[7]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">PICK-UP PAYMENT</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+
+				<form action="/pickup_bill/{{i[7]}}" method="POST">
+					<center>
+						<p>Payment for Billing ID: #{{i[7]}} on {{i[10]}}-{{i[11]}}</p>
+						<b>
+							<center>PAYMENT WILL HAVE AN ADDITIONAL 10.00 Pesos Pick-up charge.<br>CONFIRM PICK-UP?
+						</b>
+						<br>
+						<br>
+						<br>
+						<button type="submit" class="btn btn-info">CONFIRM</button>
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+							aria-label="Close">CANCEL</button>
+					</center>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="walk_in{{i[7]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">WALK-IN</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+				<br>
+				<b><code>Instruction:</code> KINDLY GO TO YOUR LOCAL WATER SUPPLYING AGENCY AND PAY VIA CASHIER TRANSACTION.<br></b>
+				<br>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endfor %}
+
+<style type="text/css">
+	@media print {
+		body * {
+			visibility: hidden;
+		}
+
+		#section-to-print,
+		#section-to-print * {
+			visibility: visible;
+		}
+
+		#section-to-print {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	function month(num) {
+		var month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+		return month[(Number(num) - 1)];
+	}
+
+	var num = $("#month").html()
+	$("#month").html(month(num));
+</script>
+{% endblock %}

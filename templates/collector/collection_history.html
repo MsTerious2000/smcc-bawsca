@@ -1,0 +1,171 @@
+{% set active_page = "collection_history" %}
+{% extends "collector/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!--{{billing}}
+  -->
+
+	<div class="col-12 text-center">
+
+		<!--  {% for i in billing %}
+      {{i}}<hr>
+    {% endfor %} -->
+
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Collection History</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>
+							<tr>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Consumer</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Due Date (MM/YYYY)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Pick-up</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bill (Amount)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Receipt</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in billing %}
+							<tr>
+								<td>{{i[1]}} {{i[2]}}</td>
+								<td>
+									{% if i[10] == '01' %} January	
+									{% elif i[10] == '02' %} February		
+									{% elif i[10] == '03' %} March
+									{% elif i[10] == '04' %} April	
+									{% elif i[10] == '05' %} May
+									{% elif i[10] == '06' %} June
+									{% elif i[10] == '07' %} July
+									{% elif i[10] == '08' %} August
+									{% elif i[10] == '09' %} September
+									{% elif i[10] == '10' %} October			
+									{% elif i[10] == '11' %} November
+									{% elif i[10] == '12' %} December	
+									{% endif %}
+									- {{i[11]}}</td>
+								<td>{{i[18]}}</td>
+								<td><b>&#8369; {{i[13]}}.00</b></td>
+								<td>
+									<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#receipt{{i[7]}}">
+										<span class="material-symbols-outlined"> receipt_long</span>
+										RECEIPT
+									</button>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+{% for i in billing %}
+<div class="modal fade" id="receipt{{i[7]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">RECEIPT</h5>
+
+				<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:black">X</button> -->
+				<button class="btn btn-info" onclick="print()">PRINT</button>
+			</div>
+			<div class="modal-body" id="section-to-print" style="border: 1px dotted black;">
+				<div>
+					<div style="float:left">
+						<img src="{{url_for('static',filename='img/logo.png')}}" width="100px" height="100px">
+					</div>
+					<div class="text-center" style="font-size: 17px; font-weight: bolder;">
+						Barangay Alubihid Water System Consumer's Association <br>
+						Address: Barangay Alubihid, Buenavista<br>
+						Province: Agusan del Norte<br>
+						Phone: <br>
+					</div>
+				</div>
+				<br>
+				<center>
+					<h5>WATER BILL<br>MONTH OF 
+						<b id="month"> 
+							{% if i[10] == '01' %} JANUARY
+							{% elif i[10] == '02' %} FEBRUARY
+							{% elif i[10] == '03' %} MARCH
+							{% elif i[10] == '04' %} APRIL
+							{% elif i[10] == '05' %} MAY
+							{% elif i[10] == '06' %} JUNE
+							{% elif i[10] == '07' %} JULY
+							{% elif i[10] == '08' %} AUGUST
+							{% elif i[10] == '09' %} SEPTEMBER
+							{% elif i[10] == '10' %} OCTOBER
+							{% elif i[10] == '11' %} NOVEMBER
+							{% elif i[10] == '12' %} DECEMBER
+							{% endif %}
+						</b> 
+						{{i[11]}}</h5>
+
+				<h5>Name: {{i[1]}} {{i[2]}}</h5>
+				<h5>Address: {{i[20]}}</h5>
+				<hr>
+				<h5>Bill Date: {{i[10]}}/1/{{i[11]}}</h5>
+				<h5>Due Date: {{i[10]}}/10/{{i[11]}}</h5>
+				<hr>
+				Payment Method: <b>{{i[16]}}</b><br>
+				Amount Paid: &#8369; {{i[13]}}.00<br>
+				Date Paid: {{i[18]}}<br>
+			</center>
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+<style type="text/css">
+	@media print {
+		body * {
+			visibility: hidden;
+		}
+
+		#section-to-print,
+		#section-to-print * {
+			visibility: visible;
+		}
+
+		#section-to-print {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	function month(num) {
+		var month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+		return month[(Number(num) - 1)];
+	}
+
+	var num = $("#month").html()
+	$("#month").html(month(num));
+</script>
+{% endblock %}

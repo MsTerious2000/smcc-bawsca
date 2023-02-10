@@ -1,0 +1,252 @@
+{% set active_page = "collection" %}
+{% extends "collector/header.html" %}
+{% block admin %}
+<div class="row">
+
+	<!--{{billing}}
+  -->
+
+	<div class="col-12 text-center">
+
+		<!--  {% for i in billing %}
+      {{i}}<hr>
+    {% endfor %} -->
+
+		<div class="card my-4">
+			<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+				<div class="bg-gradient-info shadow-primary border-radius-lg pt-4 pb-3">
+					<h6 class="text-white text-capitalize ps-3">Pick Up Bills</h6>
+				</div>
+			</div>
+			<div class="card-body px-0 pb-2">
+				<div class="table-responsive p-0">
+
+					<table class="table align-items-center mb-0">
+						<thead>
+							<tr>
+								<th class="text-secondary opacity-7"></th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Consumer</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Due Date (MM/YYYY)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Reading</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bill (Amount)</th>
+								<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STATUS</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in billing %}
+							<tr>
+								<td>
+									<button class="btn btn-info btn-sm" data-bs-toggle="modal"
+										data-bs-target="#pay{{i[7]}}">
+										<span class="material-symbols-outlined">
+											payments
+										</span>
+										Pickup Payment
+									</button>
+								</td>
+								<td>{{i[1]}} {{i[2]}}</td>
+								<td>
+									{% if i[10] == '01' %}
+										January	
+									{% elif i[10] == '02' %}
+										February		
+									{% elif i[10] == '03' %}
+										March
+									{% elif i[10] == '04' %}
+										April	
+									{% elif i[10] == '05' %}
+										May
+									{% elif i[10] == '06' %}
+										June
+									{% elif i[10] == '07' %}
+										July
+									{% elif i[10] == '08' %}
+										August
+									{% elif i[10] == '09' %}
+										September
+									{% elif i[10] == '10' %}
+										October			
+									{% elif i[10] == '11' %}
+										November
+									{% elif i[10] == '12' %}
+										December	
+									{% endif %}
+									- {{i[11]}}</td>
+								<td><b>{{i[12]}}</b></td>
+								<td><b>&#8369; {{i[13]}}.00</b></td>
+								<td>
+									{% if i[15] == 'UNPAID' %}
+									<b style="color:red">{{i[15]}}</b>
+									{% elif i[15] == 'GCASH' %}
+									<b style="color:blue">PENDING (GCash)</b>
+									{% elif i[15] == 'PAYED' %}
+									<b style="color:green">{{i[15]}}</b>
+									{% elif i[15] == 'PICK-UP' %}
+									<b style="color:blue">{{i[15]}}</b>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+{% for i in billing %}
+<div class="modal fade" id="pay{{i[7]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">PICK UP PAYMENT</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body">
+				<p>Payment for Billing ID: # <b>{{i[7]}}</b> on {{i[9]}} - {{i[10]}}</p>
+				<form action="/pick_up/{{i[7]}}/{{i[0]}}" method="POST">
+					Consumer: <b>{{i[1]}} {{i[2]}}</b><br>
+					Amount to Pay: <b>&#8369; {{i[13]}}.00</b>
+					<br>
+					<button type="submit" class="btn btn-info">Confirm Payment</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% if i[15] == 'PAYED' %}
+<div class="modal fade" id="receipt{{i[6]}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">RECIEPT for Billing ID #{{i[6]}}</h5>
+
+				<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:black">X</button> -->
+				<button class="btn btn-info" onclick="print()">
+					<span class="material-symbols-outlined">
+						print
+					</span>
+					PRINT
+				</button>
+			</div>
+			<div class="modal-body" id="section-to-print" style="border: 1px dotted black;">
+				<div>
+					<div style="float:left">
+						<img src="{{url_for('static',filename='img/logo.png')}}" style="width:147px">
+					</div>
+					<div style="font-size: 17px; float: left; font-weight: bolder;">
+						&nbsp;&nbsp;&nbsp;Barangay Alubihid Water System Consumer's Association <br>
+						&nbsp;&nbsp;&nbsp;Address: Barangay Alubihid, Buenavista<br>
+						&nbsp;&nbsp;&nbsp;Province: Agusan del Norte<br>
+						&nbsp;&nbsp;&nbsp;Phone: <br>
+						<br>
+						<br>
+
+					</div>
+				</div>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<center>
+					<h5>WATER BILL<br>MONTH OF <b id="month">{{i[9]}}</b> {{i[10]}}</h5>
+				</center>
+
+				<h5>Name: {{i[1]}} {{i[2]}}</h5>
+				<h5>Address: {{i[18]}}</h5>
+				<h5>Classification: Resident</h3>
+					<hr>
+					<h5>Bill Date: {{i[9]}}/1/{{i[10]}}</h5>
+					<h5>Due Date: {{i[9]}}/10/{{i[10]}}</h5>
+					<hr>
+
+					Payment Method: <b>{{i[15]}}</b><br>
+					Amount Paid: &#8369;{{i[12]}}.00<br>
+					Date Paid: {{i[17]}}<br>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endfor %}
+
+
+<div class="modal fade" id="search" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">SEARCH</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					style="color:black">X</button>
+
+			</div>
+			<div class="modal-body text-center">
+
+				<form action="/search" method="POST">
+					<input type="text" name="user_id" list="users_list" class="form-control" required>
+					<datalist id="users_list">
+						{% for i in users %}
+						<option value="{{i[0]}}">{{i[1]}} {{i[2]}}</option>
+						{% endfor %}
+					</datalist>
+					<br>
+					<button class="btn btn-info" type="submit">Search</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	@media print {
+		body * {
+			visibility: hidden;
+		}
+
+		#section-to-print,
+		#section-to-print * {
+			visibility: visible;
+		}
+
+		#section-to-print {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	}
+
+	.form-control {
+		border-bottom: 1px solid gray;
+		border-radius: 0px;
+	}
+
+	.form-control:focus {
+		border-bottom: 3px solid rgb(227, 48, 0);
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	function month(num) {
+		var month = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+		return month[(Number(num) - 1)];
+	}
+
+	var num = $("#month").html()
+	$("#month").html(month(num));
+</script>
+{% endblock %}
